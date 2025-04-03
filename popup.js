@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   let toggleButton = document.getElementById("toggle-tracking");
   let clearButton = document.getElementById("clear-storage");
+  let copyAllButton = document.getElementById("copy-all-html"); // New button
   let pageList = document.getElementById("page-list");
 
   // Load tracking status
@@ -64,6 +65,20 @@ document.addEventListener("DOMContentLoaded", () => {
   clearButton.addEventListener("click", () => {
     chrome.storage.local.set({ savedPages: [] }, () => {
       pageList.innerHTML = "<p>Data cleared!</p>";
+    });
+  });
+
+  // Copy all saved HTML to clipboard
+  copyAllButton.addEventListener("click", () => {
+    chrome.storage.local.get(["savedPages"], (data) => {
+      if (data.savedPages && data.savedPages.length > 0) {
+        let allHtml = data.savedPages.map(entry => `<!-- ${entry.url} -->\n${entry.html}`).join("\n\n");
+        navigator.clipboard.writeText(allHtml).then(() => {
+          alert("All HTML copied to clipboard!");
+        });
+      } else {
+        alert("No pages saved to copy.");
+      }
     });
   });
 
