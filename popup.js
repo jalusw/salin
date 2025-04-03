@@ -1,4 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
+  let toggleButton = document.getElementById("toggle-tracking");
+
+  // Load tracking status
+  chrome.storage.local.get({ trackingEnabled: false }, (data) => {
+    toggleButton.textContent = data.trackingEnabled ? "Stop Tracking" : "Start Tracking";
+  });
+
+  // Toggle tracking on button click
+  toggleButton.addEventListener("click", () => {
+    chrome.storage.local.get({ trackingEnabled: false }, (data) => {
+      let newState = !data.trackingEnabled;
+      chrome.storage.local.set({ trackingEnabled: newState }, () => {
+        toggleButton.textContent = newState ? "Stop Tracking" : "Start Tracking";
+      });
+    });
+  });
+
+  // Load saved pages
   chrome.storage.local.get(["savedPages"], (data) => {
     let pageList = document.getElementById("page-list");
 
